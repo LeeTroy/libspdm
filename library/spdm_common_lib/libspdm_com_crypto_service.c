@@ -750,6 +750,7 @@ bool libspdm_generate_challenge_auth_signature(libspdm_context_t *spdm_context,
                                          &m1m2_hash_size, &m1m2_hash);
 #endif
     if (!result) {
+        printk("CTX[%p] %s:%d\n", spdm_context, __PRETTY_FUNCTION__, __LINE__);
         return false;
     }
 
@@ -777,6 +778,7 @@ bool libspdm_generate_challenge_auth_signature(libspdm_context_t *spdm_context,
     } else {
         signature_size = libspdm_get_asym_signature_size(
             spdm_context->connection_info.algorithm.base_asym_algo);
+        printk("CTX[%p] %s:%d signature_size=%d\n", spdm_context, __PRETTY_FUNCTION__, __LINE__, signature_size);
 #if LIBSPDM_RECORD_TRANSCRIPT_DATA_SUPPORT
         result = libspdm_responder_data_sign(
             spdm_context->connection_info.version, SPDM_CHALLENGE_AUTH,
@@ -791,9 +793,11 @@ bool libspdm_generate_challenge_auth_signature(libspdm_context_t *spdm_context,
             spdm_context->connection_info.algorithm.base_hash_algo,
             true, m1m2_hash, m1m2_hash_size, signature,
             &signature_size);
+        printk("CTX[%p] %s:%d asym_algo=%p hash_algo=%p result=%d\n", spdm_context, __PRETTY_FUNCTION__, __LINE__, 
+            spdm_context->connection_info.algorithm.base_asym_algo, spdm_context->connection_info.algorithm.base_hash_algo, result);
 #endif
     }
-
+    printk("CTX[%p] %s:%d\n", spdm_context, __PRETTY_FUNCTION__, __LINE__);
     return result;
 }
 

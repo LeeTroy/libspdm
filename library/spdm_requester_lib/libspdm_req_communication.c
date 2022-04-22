@@ -34,10 +34,12 @@ libspdm_return_t libspdm_init_connection(void *context,
     if (!get_version_only) {
         status = libspdm_get_capabilities(spdm_context);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
+            printk("FAILED GET CAP\n");
             return status;
         }
         status = libspdm_negotiate_algorithms(spdm_context);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
+            printk("FAILED NEGO ALGO\n");
             return status;
         }
     }
@@ -90,6 +92,7 @@ libspdm_return_t libspdm_start_session(void *context, bool use_psk,
             spdm_context, measurement_hash_type, slot_id, session_policy,
             session_id, heartbeat_period, &req_slot_id_param,
             measurement_hash);
+        printk("TTTTTTTTT libspdm_send_receive_key_exchange status=%p\n", status);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             LIBSPDM_DEBUG((LIBSPDM_DEBUG_INFO,
                            "libspdm_start_session - libspdm_send_receive_key_exchange - %p\n",
@@ -103,7 +106,7 @@ libspdm_return_t libspdm_start_session(void *context, bool use_psk,
             LIBSPDM_ASSERT(false);
             return LIBSPDM_STATUS_INVALID_STATE_LOCAL;
         }
-
+        printk("TTTTTTTTT mut_auth_requested=%p\n", session_info->mut_auth_requested);
         switch (session_info->mut_auth_requested) {
         case 0:
             break;

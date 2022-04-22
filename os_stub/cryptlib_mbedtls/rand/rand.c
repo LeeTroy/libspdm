@@ -49,7 +49,10 @@ bool libspdm_random_bytes(uint8_t *output, size_t size)
 {
     bool ret;
     uint64_t temp_rand;
-
+    union {
+        uint8_t buf[8];
+        uint64_t val;
+    } u;
     ret = false;
 
     while (size > 0) {
@@ -60,7 +63,16 @@ bool libspdm_random_bytes(uint8_t *output, size_t size)
             return ret;
         }
         if (size >= sizeof(temp_rand)) {
-            *((uint64_t *)output) = temp_rand;
+            u.val = temp_rand;
+            // *((uint64_t *)output) = temp_rand;
+            output[0] = u.buf[0];
+            output[1] = u.buf[1];
+            output[2] = u.buf[2];
+            output[3] = u.buf[3];
+            output[4] = u.buf[4];
+            output[5] = u.buf[5];
+            output[6] = u.buf[6];
+            output[7] = u.buf[7];
             output += sizeof(uint64_t);
             size -= sizeof(temp_rand);
         } else {

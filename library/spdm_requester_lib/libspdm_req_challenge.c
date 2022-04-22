@@ -75,7 +75,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
     size_t transport_header_size;
 
     LIBSPDM_ASSERT((slot_id < SPDM_MAX_SLOT_COUNT) || (slot_id == 0xff));
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     spdm_context = context;
     libspdm_reset_message_buffer_via_request_code(spdm_context, NULL,
                                                   SPDM_CHALLENGE);
@@ -93,13 +93,13 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
         (spdm_context->local_context.peer_cert_chain_provision_size == 0)) {
         return LIBSPDM_STATUS_INVALID_PARAMETER;
     }
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     transport_header_size = spdm_context->transport_get_header_size(spdm_context);
     libspdm_acquire_sender_buffer (spdm_context, &message_size, (void **)&message);
     LIBSPDM_ASSERT (message_size >= transport_header_size);
     spdm_request = (void *)(message + transport_header_size);
     spdm_request_size = message_size - transport_header_size;
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     spdm_request->header.spdm_version = libspdm_get_connection_version (spdm_context);
     spdm_request->header.request_response_code = SPDM_CHALLENGE;
     spdm_request->header.param1 = slot_id;
@@ -121,7 +121,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
         libspdm_copy_mem(requester_nonce, SPDM_NONCE_SIZE,
                          spdm_request->nonce, SPDM_NONCE_SIZE);
     }
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     status = libspdm_send_spdm_request(spdm_context, NULL,
                                        spdm_request_size, spdm_request);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -130,7 +130,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
     }
     libspdm_release_sender_buffer (spdm_context);
     spdm_request = (void *)spdm_context->last_spdm_request;
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     /* receive */
 
     libspdm_acquire_receiver_buffer (spdm_context, &message_size, (void **)&message);
@@ -142,14 +142,17 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
     status = libspdm_receive_spdm_response(
         spdm_context, NULL, &spdm_response_size, (void **)&spdm_response);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
         goto receive_done;
     }
     if (spdm_response_size < sizeof(spdm_message_header_t)) {
         status = LIBSPDM_STATUS_INVALID_MSG_SIZE;
+        printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
         goto receive_done;
     }
     if (spdm_response->header.spdm_version != spdm_request->header.spdm_version) {
         status = LIBSPDM_STATUS_INVALID_MSG_FIELD;
+        printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
         goto receive_done;
     }
     if (spdm_response->header.request_response_code == SPDM_ERROR) {
@@ -159,17 +162,21 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
             (void **)&spdm_response, SPDM_CHALLENGE, SPDM_CHALLENGE_AUTH,
             sizeof(libspdm_challenge_auth_response_max_t));
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
+            printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
             goto receive_done;
         }
     } else if (spdm_response->header.request_response_code !=
                SPDM_CHALLENGE_AUTH) {
         status = LIBSPDM_STATUS_INVALID_MSG_FIELD;
+        printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
         goto receive_done;
     }
     if (spdm_response_size < sizeof(spdm_challenge_auth_response_t)) {
         status = LIBSPDM_STATUS_INVALID_MSG_SIZE;
+        printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
         goto receive_done;
     }
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     auth_attribute = spdm_response->header.param1;
     if (spdm_response->header.spdm_version >= SPDM_MESSAGE_VERSION_11 && slot_id == 0xFF) {
         if ((auth_attribute & SPDM_CHALLENGE_AUTH_RESPONSE_ATTRIBUTE_SLOT_ID_MASK) != 0xF) {
@@ -193,6 +200,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
             goto receive_done;
         }
     }
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     if ((auth_attribute & SPDM_CHALLENGE_AUTH_RESPONSE_ATTRIBUTE_BASIC_MUT_AUTH_REQ) != 0) {
         if (!libspdm_is_capabilities_flag_supported(
                 spdm_context, true,
@@ -216,7 +224,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
         status = LIBSPDM_STATUS_INVALID_MSG_SIZE;
         goto receive_done;
     }
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     ptr = spdm_response->cert_chain_hash;
 
     cert_chain_hash = ptr;
@@ -239,7 +247,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
     if (responder_nonce != NULL) {
         libspdm_copy_mem(responder_nonce, SPDM_NONCE_SIZE, nonce, SPDM_NONCE_SIZE);
     }
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     measurement_summary_hash = ptr;
     ptr += measurement_summary_hash_size;
     LIBSPDM_DEBUG((LIBSPDM_DEBUG_INFO, "measurement_summary_hash (0x%x) - ",
@@ -256,7 +264,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
     ptr += sizeof(uint16_t);
 
     /* Cache data*/
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     status = libspdm_append_message_c(spdm_context, spdm_request,
                                       spdm_request_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -281,7 +289,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
         status = LIBSPDM_STATUS_BUFFER_FULL;
         goto receive_done;
     }
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     opaque = ptr;
     ptr += opaque_length;
     LIBSPDM_DEBUG((LIBSPDM_DEBUG_INFO, "opaque (0x%x):\n", opaque_length));
@@ -297,7 +305,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
         status = LIBSPDM_STATUS_VERIF_FAIL;
         goto receive_done;
     }
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     if (measurement_hash != NULL) {
         libspdm_copy_mem(measurement_hash, measurement_summary_hash_size,
                          measurement_summary_hash, measurement_summary_hash_size);
@@ -323,7 +331,7 @@ libspdm_return_t libspdm_try_challenge(void *context, uint8_t slot_id,
             LIBSPDM_CONNECTION_STATE_AUTHENTICATED;
         return LIBSPDM_STATUS_SUCCESS;
     }
-
+printk("CTX[%p] %s:%d\n", context, __PRETTY_FUNCTION__, __LINE__);
     spdm_context->connection_info.connection_state =
         LIBSPDM_CONNECTION_STATE_AUTHENTICATED;
     status = LIBSPDM_STATUS_SUCCESS;

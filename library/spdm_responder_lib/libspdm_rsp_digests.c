@@ -42,13 +42,15 @@ libspdm_return_t libspdm_get_response_digests(void *context, size_t request_size
 
     spdm_context = context;
     spdm_request = request;
-
+    printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
     if (spdm_request->header.spdm_version != libspdm_get_connection_version(spdm_context)) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_VERSION_MISMATCH, 0,
                                                response_size, response);
     }
     if (spdm_context->response_state != LIBSPDM_RESPONSE_STATE_NORMAL) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_responder_handle_response_state(
             spdm_context,
             spdm_request->header.request_response_code,
@@ -57,18 +59,21 @@ libspdm_return_t libspdm_get_response_digests(void *context, size_t request_size
     if (!libspdm_is_capabilities_flag_supported(
             spdm_context, false, 0,
             SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CERT_CAP)) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(
             spdm_context, SPDM_ERROR_CODE_UNSUPPORTED_REQUEST,
             SPDM_GET_DIGESTS, response_size, response);
     }
     if (spdm_context->connection_info.connection_state !=
         LIBSPDM_CONNECTION_STATE_NEGOTIATED) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNEXPECTED_REQUEST,
                                                0, response_size, response);
     }
 
     if (request_size != sizeof(spdm_get_digest_request_t)) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_INVALID_REQUEST, 0,
                                                response_size, response);
@@ -85,6 +90,7 @@ libspdm_return_t libspdm_get_response_digests(void *context, size_t request_size
         }
     }
     if (no_local_cert_chain) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(
             spdm_context, SPDM_ERROR_CODE_UNSPECIFIED,
             SPDM_GET_DIGESTS, response_size, response);
@@ -111,6 +117,7 @@ libspdm_return_t libspdm_get_response_digests(void *context, size_t request_size
          index++) {
         if (spdm_context->local_context
             .local_cert_chain_provision[index] == NULL) {
+            printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
             return libspdm_generate_error_response(
                 spdm_context, SPDM_ERROR_CODE_UNSPECIFIED,
                 0, response_size, response);
@@ -119,6 +126,7 @@ libspdm_return_t libspdm_get_response_digests(void *context, size_t request_size
         result = libspdm_generate_cert_chain_hash(spdm_context, index,
                                                   &digest[hash_size * index]);
         if (!result) {
+            printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
             return libspdm_generate_error_response(
                 spdm_context, SPDM_ERROR_CODE_UNSPECIFIED,
                 0, response_size, response);
@@ -130,6 +138,7 @@ libspdm_return_t libspdm_get_response_digests(void *context, size_t request_size
     status = libspdm_append_message_b(spdm_context, spdm_request,
                                       request_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -138,6 +147,7 @@ libspdm_return_t libspdm_get_response_digests(void *context, size_t request_size
     status = libspdm_append_message_b(spdm_context, spdm_response,
                                       *response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -145,7 +155,7 @@ libspdm_return_t libspdm_get_response_digests(void *context, size_t request_size
 
     libspdm_set_connection_state(spdm_context,
                                  LIBSPDM_CONNECTION_STATE_AFTER_DIGESTS);
-
+    printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
     return LIBSPDM_STATUS_SUCCESS;
 }
 

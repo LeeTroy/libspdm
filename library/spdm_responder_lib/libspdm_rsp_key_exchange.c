@@ -213,6 +213,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
 
     if(!libspdm_get_random_number(SPDM_RANDOM_DATA_SIZE,
                                   spdm_response->random_data)) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -230,6 +231,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
             spdm_context->connection_info.algorithm.dhe_named_group,
             dhe_context);
         libspdm_free_session_id(spdm_context, session_id);
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -252,6 +254,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
         dhe_context);
     if (!result) {
         libspdm_free_session_id(spdm_context, session_id);
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -277,6 +280,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
 
     if (!result) {
         libspdm_free_session_id(spdm_context, session_id);
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -299,6 +303,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
     status = libspdm_append_message_k(spdm_context, session_info, false, request, request_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         libspdm_free_session_id(spdm_context, session_id);
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -308,6 +313,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
                                       (size_t)ptr - (size_t)spdm_response);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         libspdm_free_session_id(spdm_context, session_id);
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -316,6 +322,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
                                                          session_info, ptr);
     if (!result) {
         libspdm_free_session_id(spdm_context, session_id);
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(
             spdm_context, SPDM_ERROR_CODE_UNSPECIFIED,
             0, response_size, response);
@@ -324,6 +331,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
     status = libspdm_append_message_k(spdm_context, session_info, false, ptr, signature_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         libspdm_free_session_id(spdm_context, session_id);
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -335,6 +343,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
                                         th1_hash_data);
     if (!result) {
         libspdm_free_session_id(spdm_context, session_id);
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -343,6 +352,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
         session_info->secured_message_context, th1_hash_data);
     if (!result) {
         libspdm_free_session_id(spdm_context, session_id);
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -358,6 +368,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
                                                         session_info, ptr);
         if (!result) {
             libspdm_free_session_id(spdm_context, session_id);
+            printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
             return libspdm_generate_error_response(
                 spdm_context,
                 SPDM_ERROR_CODE_UNSPECIFIED,
@@ -366,6 +377,7 @@ libspdm_return_t libspdm_get_response_key_exchange(void *context,
         status = libspdm_append_message_k(spdm_context, session_info, false, ptr, hmac_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             libspdm_free_session_id(spdm_context, session_id);
+            printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
             return libspdm_generate_error_response(
                 spdm_context, SPDM_ERROR_CODE_UNSPECIFIED,
                 0, response_size, response);

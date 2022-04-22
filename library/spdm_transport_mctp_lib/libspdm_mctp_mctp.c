@@ -121,7 +121,10 @@ libspdm_return_t libspdm_mctp_decode_message(uint32_t **session_id,
     }
 
     mctp_message_header = transport_message;
-
+// printk("mctp_message_header->message_type: %02x\n  -> DATA[%p] ", mctp_message_header->message_type, transport_message);
+// for (size_t i=0; i<transport_message_size; ++i)
+//     printk("%02x ", *((uint8_t *)transport_message + i));
+// printk("\n");
     switch (mctp_message_header->message_type) {
     case MCTP_MESSAGE_TYPE_SECURED_MCTP:
         LIBSPDM_ASSERT(session_id != NULL);
@@ -132,8 +135,20 @@ libspdm_return_t libspdm_mctp_decode_message(uint32_t **session_id,
             sizeof(mctp_message_header_t) + sizeof(uint32_t)) {
             return LIBSPDM_STATUS_INVALID_MSG_SIZE;
         }
+#if 0
+        printk("TODO: 4 byte alignment transport_message=%p\n", transport_message);
+        uint8_t *buf = malloc(4);
+        *session_id = buf;
+        buf[0] = *((uint8_t *)transport_message + sizeof(mctp_message_header_t));
+        buf[1] = *((uint8_t *)transport_message + sizeof(mctp_message_header_t)+1);
+        buf[2] = *((uint8_t *)transport_message + sizeof(mctp_message_header_t)+2);
+        buf[3] = *((uint8_t *)transport_message + sizeof(mctp_message_header_t)+3);
+
+#else
         *session_id = (uint32_t *)((uint8_t *)transport_message +
                                    sizeof(mctp_message_header_t));
+#endif
+        //printk("MCTP SECURE session_id[%p]=%p\n", *session_id, **session_id);
         break;
     case MCTP_MESSAGE_TYPE_SPDM:
         if (session_id != NULL) {

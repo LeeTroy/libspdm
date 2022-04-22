@@ -249,11 +249,13 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
                      (spdm_context->local_context.algorithm.measurement_hash_algo == 0)));
 
     if (spdm_request->header.spdm_version != libspdm_get_connection_version(spdm_context)) {
+        printk("libspdm_get_response_algorithms: %d\n", __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_VERSION_MISMATCH, 0,
                                                response_size, response);
     }
     if (spdm_context->response_state != LIBSPDM_RESPONSE_STATE_NORMAL) {
+        printk("libspdm_get_response_algorithms: %d\n", __LINE__);
         return libspdm_responder_handle_response_state(
             spdm_context,
             spdm_request->header.request_response_code,
@@ -261,12 +263,14 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
     }
     if (spdm_context->connection_info.connection_state !=
         LIBSPDM_CONNECTION_STATE_AFTER_CAPABILITIES) {
+        printk("libspdm_get_response_algorithms: %d\n", __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNEXPECTED_REQUEST,
                                                0, response_size, response);
     }
 
     if (request_size < sizeof(spdm_negotiate_algorithms_request_t)) {
+        printk("libspdm_get_response_algorithms: %d\n", __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_INVALID_REQUEST, 0,
                                                response_size, response);
@@ -277,6 +281,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
         sizeof(uint32_t) * spdm_request->ext_hash_count +
         sizeof(spdm_negotiate_algorithms_common_struct_table_t) *
         spdm_request->header.param1) {
+        printk("libspdm_get_response_algorithms: %d\n", __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_INVALID_REQUEST, 0,
                                                response_size, response);
@@ -289,6 +294,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
         for (index = 0; index < spdm_request->header.param1; index++) {
             if ((size_t)spdm_request + request_size <
                 (size_t)struct_table) {
+                printk("libspdm_get_response_algorithms: %d\n", __LINE__);
                 return libspdm_generate_error_response(
                     spdm_context,
                     SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -297,6 +303,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
             if ((size_t)spdm_request + request_size -
                 (size_t)struct_table <
                 sizeof(spdm_negotiate_algorithms_common_struct_table_t)) {
+                printk("libspdm_get_response_algorithms: %d\n", __LINE__);
                 return libspdm_generate_error_response(
                     spdm_context,
                     SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -306,6 +313,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
             ext_alg_count = struct_table->alg_count & 0xF;
             ext_alg_total_count += ext_alg_count;
             if (fixed_alg_size != 2) {
+                printk("libspdm_get_response_algorithms: %d\n", __LINE__);
                 return libspdm_generate_error_response(
                     spdm_context,
                     SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -315,6 +323,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
                 (size_t)struct_table -
                 sizeof(spdm_negotiate_algorithms_common_struct_table_t) <
                 sizeof(uint32_t) * ext_alg_count) {
+                printk("libspdm_get_response_algorithms: %d\n", __LINE__);
                 return libspdm_generate_error_response(
                     spdm_context,
                     SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -330,12 +339,14 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
     /* Algorithm count check and message size check*/
     if (spdm_request->header.spdm_version >= SPDM_MESSAGE_VERSION_11) {
         if (ext_alg_total_count > SPDM_NEGOTIATE_ALGORITHMS_REQUEST_MAX_EXT_ALG_COUNT_VERSION_11) {
+            printk("libspdm_get_response_algorithms: %d\n", __LINE__);
             return libspdm_generate_error_response(
                 spdm_context,
                 SPDM_ERROR_CODE_INVALID_REQUEST, 0,
                 response_size, response);
         }
         if (spdm_request->length > SPDM_NEGOTIATE_ALGORITHMS_REQUEST_MAX_LENGTH_VERSION_11) {
+            printk("libspdm_get_response_algorithms: %d\n", __LINE__);
             return libspdm_generate_error_response(
                 spdm_context,
                 SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -343,12 +354,14 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
         }
     } else {
         if (ext_alg_total_count > SPDM_NEGOTIATE_ALGORITHMS_REQUEST_MAX_EXT_ALG_COUNT_VERSION_10) {
+            printk("libspdm_get_response_algorithms: %d\n", __LINE__);
             return libspdm_generate_error_response(
                 spdm_context,
                 SPDM_ERROR_CODE_INVALID_REQUEST, 0,
                 response_size, response);
         }
         if (spdm_request->length > SPDM_NEGOTIATE_ALGORITHMS_REQUEST_MAX_LENGTH_VERSION_10) {
+            printk("libspdm_get_response_algorithms: %d\n", __LINE__);
             return libspdm_generate_error_response(
                 spdm_context,
                 SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -357,6 +370,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
     }
     request_size = (size_t)struct_table - (size_t)spdm_request;
     if (request_size != spdm_request->length) {
+        printk("libspdm_get_response_algorithms: %d\n", __LINE__);
         return libspdm_generate_error_response(
             spdm_context,
             SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -455,6 +469,11 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
         m_libspdm_asym_priority_table, LIBSPDM_ARRAY_SIZE(m_libspdm_asym_priority_table),
         spdm_context->local_context.algorithm.base_asym_algo,
         spdm_context->connection_info.algorithm.base_asym_algo);
+    printk("Selected base_asym=%p local=%p connection=%p\n",
+        spdm_response->base_asym_sel,
+        spdm_context->local_context.algorithm.base_asym_algo,
+        spdm_context->connection_info.algorithm.base_asym_algo
+    );
     spdm_response->base_hash_sel = libspdm_prioritize_algorithm(
         m_libspdm_hash_priority_table, LIBSPDM_ARRAY_SIZE(m_libspdm_hash_priority_table),
         spdm_context->local_context.algorithm.base_hash_algo,
@@ -467,6 +486,11 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
             m_libspdm_dhe_priority_table, LIBSPDM_ARRAY_SIZE(m_libspdm_dhe_priority_table),
             spdm_context->local_context.algorithm.dhe_named_group,
             spdm_context->connection_info.algorithm.dhe_named_group);
+    printk("alg_supported=%p local=%p connection=%p\n",
+        spdm_response->struct_table[0].alg_supported,
+        spdm_context->local_context.algorithm.dhe_named_group,
+        spdm_context->connection_info.algorithm.dhe_named_group
+    );
     spdm_response->struct_table[1].alg_type =
         SPDM_NEGOTIATE_ALGORITHMS_STRUCT_TABLE_ALG_TYPE_AEAD;
     spdm_response->struct_table[1].alg_count = 0x20;
@@ -516,6 +540,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
             SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP)) {
         if (spdm_context->connection_info.algorithm.measurement_spec !=
             SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF) {
+            printk("libspdm_get_response_algorithms: %d\n", __LINE__);
             return libspdm_generate_error_response(
                 spdm_context, SPDM_ERROR_CODE_INVALID_REQUEST,
                 0, response_size, response);
@@ -524,6 +549,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
             spdm_context->connection_info.algorithm
             .measurement_hash_algo);
         if (algo_size == 0) {
+            printk("libspdm_get_response_algorithms: %d\n", __LINE__);
             return libspdm_generate_error_response(
                 spdm_context, SPDM_ERROR_CODE_INVALID_REQUEST,
                 0, response_size, response);
@@ -532,6 +558,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
     algo_size = libspdm_get_hash_size(
         spdm_context->connection_info.algorithm.base_hash_algo);
     if (algo_size == 0) {
+        printk("libspdm_get_response_algorithms: %d\n", __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_INVALID_REQUEST, 0,
                                                response_size, response);
@@ -539,9 +566,11 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
     if (libspdm_is_capabilities_flag_supported(
             spdm_context, false, 0,
             SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP)) {
+        printk("spdm_context->connection_info.algorithm.base_asym_algo = %p\n", spdm_context->connection_info.algorithm.base_asym_algo);
         algo_size = libspdm_get_asym_signature_size(
             spdm_context->connection_info.algorithm.base_asym_algo);
         if (algo_size == 0) {
+            printk("libspdm_get_response_algorithms: %d\n", __LINE__);
             return libspdm_generate_error_response(
                 spdm_context, SPDM_ERROR_CODE_INVALID_REQUEST,
                 0, response_size, response);
@@ -572,6 +601,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
                 spdm_context->connection_info.algorithm
                 .dhe_named_group);
             if (algo_size == 0) {
+                printk("libspdm_get_response_algorithms: %d\n", __LINE__);
                 return libspdm_generate_error_response(
                     spdm_context,
                     SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -590,6 +620,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
                 spdm_context->connection_info.algorithm
                 .aead_cipher_suite);
             if (algo_size == 0) {
+                printk("libspdm_get_response_algorithms: %d\n", __LINE__);
                 return libspdm_generate_error_response(
                     spdm_context,
                     SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -604,6 +635,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
                 spdm_context->connection_info.algorithm
                 .req_base_asym_alg);
             if (algo_size == 0) {
+                printk("libspdm_get_response_algorithms: %d\n", __LINE__);
                 return libspdm_generate_error_response(
                     spdm_context,
                     SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -621,6 +653,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
             if (spdm_context->connection_info.algorithm
                 .key_schedule !=
                 SPDM_ALGORITHMS_KEY_SCHEDULE_HMAC_HASH) {
+                printk("libspdm_get_response_algorithms: %d\n", __LINE__);
                 return libspdm_generate_error_response(
                     spdm_context,
                     SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -630,6 +663,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
                 if ((spdm_context->connection_info.algorithm.other_params_support &
                      SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_MASK) !=
                     SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1) {
+                    printk("libspdm_get_response_algorithms: %d\n", __LINE__);
                     return libspdm_generate_error_response(
                         spdm_context,
                         SPDM_ERROR_CODE_INVALID_REQUEST, 0,
@@ -647,6 +681,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
     status = libspdm_append_message_a(spdm_context, spdm_request,
                                       spdm_request_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        printk("libspdm_get_response_algorithms: %d\n", __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -655,6 +690,7 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
     status = libspdm_append_message_a(spdm_context, spdm_response,
                                       *response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        printk("libspdm_get_response_algorithms: %d\n", __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -662,6 +698,6 @@ libspdm_return_t libspdm_get_response_algorithms(void *context,
 
     libspdm_set_connection_state(spdm_context,
                                  LIBSPDM_CONNECTION_STATE_NEGOTIATED);
-
+    //printk("libspdm_get_response_algorithms: %d\n", __LINE__);
     return LIBSPDM_STATUS_SUCCESS;
 }

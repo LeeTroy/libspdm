@@ -2609,6 +2609,7 @@ bool libspdm_asym_sign_hash(
 
     asym_sign = libspdm_get_asym_sign(base_asym_algo);
     if (asym_sign == NULL) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return false;
     }
 
@@ -2653,6 +2654,7 @@ bool libspdm_asym_sign_hash(
             result = libspdm_hash_all(base_hash_algo, message, message_size,
                                       full_message_hash);
             if (!result) {
+                printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
                 return false;
             }
             return asym_sign(context, hash_nid, param, param_size, full_message_hash, hash_size,
@@ -3997,7 +3999,7 @@ bool libspdm_get_signature_algo_OID(uint32_t base_asym_algo, uint32_t base_hash_
 {
     uint32_t oid_len;
     oid_len = libspdm_get_signature_algo_OID_len(base_asym_algo);
-
+printk("libspdm_get_signature_algo_OID asym=%p hash=%p\n", base_asym_algo, base_hash_algo);
     switch (base_asym_algo) {
     case SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_2048:
     case SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSAPSS_2048:
@@ -4117,23 +4119,35 @@ bool libspdm_verify_cert_signature_algo_OID(const uint8_t *cert, size_t cert_siz
     oid_len = libspdm_get_signature_algo_OID_len(base_asym_algo);
     if(oid_len == 0) {
         status = false;
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return false;
     }
     /*get signature algo OID from libspdm stored*/
     status = libspdm_get_signature_algo_OID(base_asym_algo, base_hash_algo,
                                             libspdm_signature_algo_oid);
     if (!status) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return false;
     }
 
     /*get signature algo OID from cert*/
     status = libspdm_x509_get_signature_algorithm(cert, cert_size,
                                                   cert_signature_algo_oid, &oid_len);
+    printk("ALGOOOO cert=%p certsize=%d oidlen=%d status=%d:\n", cert, cert_size, oid_len, status);
+    printk("cert_signature_algo_oid:    %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
+    cert_signature_algo_oid[0], cert_signature_algo_oid[1], cert_signature_algo_oid[2], cert_signature_algo_oid[3], cert_signature_algo_oid[4], 
+    cert_signature_algo_oid[5], cert_signature_algo_oid[6], cert_signature_algo_oid[7], cert_signature_algo_oid[8], cert_signature_algo_oid[9]);
+    
+    printk("libspdm_signature_algo_oid: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
+    libspdm_signature_algo_oid[0], libspdm_signature_algo_oid[1], libspdm_signature_algo_oid[2], libspdm_signature_algo_oid[3], libspdm_signature_algo_oid[4], 
+    libspdm_signature_algo_oid[5], libspdm_signature_algo_oid[6], libspdm_signature_algo_oid[7], libspdm_signature_algo_oid[8], libspdm_signature_algo_oid[9]);
+
     if (!status ||
         oid_len != libspdm_get_signature_algo_OID_len(base_asym_algo)||
         libspdm_const_compare_mem(cert_signature_algo_oid,
                                   libspdm_signature_algo_oid, oid_len)) {
         status = false;
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return status;
     }
 
@@ -4270,6 +4284,7 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
 #endif
 
     if (cert == NULL || cert_size == 0) {
+printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         return false;
     }
 
@@ -4293,10 +4308,12 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
     cert_version = 0;
     status = libspdm_x509_get_version(cert, cert_size, &cert_version);
     if (!status) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
     if (cert_version != 2) {
         status = false;
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
@@ -4305,6 +4322,7 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
     status = libspdm_x509_get_serial_number(cert, cert_size, NULL, &asn1_buffer_len);
     if (asn1_buffer_len == 0) {
         status = false;
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
@@ -4312,6 +4330,7 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
     status =
         libspdm_verify_cert_signature_algo_OID(cert, cert_size, base_asym_algo, base_hash_algo);
     if (!status) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
@@ -4320,6 +4339,7 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
     status = libspdm_x509_get_issuer_name(cert, cert_size, NULL, &asn1_buffer_len);
     if (asn1_buffer_len == 0) {
         status = false;
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
@@ -4328,6 +4348,7 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
     status = libspdm_x509_get_subject_name(cert, cert_size, NULL, &asn1_buffer_len);
     if (asn1_buffer_len == 0) {
         status = false;
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
@@ -4336,12 +4357,14 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
                                        &end_cert_from_len, end_cert_to,
                                        &end_cert_to_len);
     if (!status) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
     status = libspdm_internal_x509_date_time_check(
         end_cert_from, end_cert_from_len, end_cert_to, end_cert_to_len);
     if (!status) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
@@ -4372,6 +4395,7 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
     }
 #endif
     if (!status) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
@@ -4379,24 +4403,28 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
     value = 0;
     status = libspdm_x509_get_key_usage(cert, cert_size, &value);
     if (!status) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
     if (LIBSPDM_CRYPTO_X509_KU_DIGITAL_SIGNATURE & value) {
         status = true;
     } else {
         status = false;
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
     /* 9. verify SPDM extension OID*/
     status = libspdm_verify_leaf_cert_eku_spdm_OID(cert, cert_size, is_device_cert_model);
     if (!status) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
     /* 10. verify basic constraints*/
     status = libspdm_verify_leaf_cert_basic_constraints(cert, cert_size);
     if (!status) {
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
 
@@ -4405,6 +4433,7 @@ bool libspdm_x509_certificate_check(const uint8_t *cert, size_t cert_size,
     status = libspdm_x509_get_extended_key_usage(cert, cert_size, NULL, &value);
     if (value == 0) {
         status = false;
+        printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
         goto cleanup;
     }
     status = true;
@@ -4656,7 +4685,9 @@ bool libspdm_verify_cert_chain_data(uint8_t *cert_chain_data, size_t cert_chain_
     size_t root_cert_buffer_size;
     uint8_t *leaf_cert_buffer;
     size_t leaf_cert_buffer_size;
-
+printk("---> cert_chain_data=%p cert_chain_data_size=%d\n---> base_asym_algo=%p base_hash_algo=%p\n",
+    cert_chain_data, cert_chain_data_size, base_asym_algo, base_hash_algo
+);
     if (cert_chain_data_size >
         0xFFFF - (sizeof(spdm_cert_chain_t) + LIBSPDM_MAX_HASH_SIZE)) {
         LIBSPDM_DEBUG((LIBSPDM_DEBUG_INFO,
@@ -4671,7 +4702,9 @@ bool libspdm_verify_cert_chain_data(uint8_t *cert_chain_data, size_t cert_chain_
                        "!!! VerifyCertificateChainData - FAIL (get root certificate failed)!!!\n"));
         return false;
     }
-
+printk("---> root_cert_buffer=%p root_cert_buffer_size=%d\n---> cert_chain_data=%p cert_chain_data_size=%d\n",
+    root_cert_buffer, root_cert_buffer_size, cert_chain_data, cert_chain_data_size
+);
     if (!libspdm_x509_verify_cert_chain(root_cert_buffer, root_cert_buffer_size,
                                         cert_chain_data, cert_chain_data_size)) {
         LIBSPDM_DEBUG((LIBSPDM_DEBUG_INFO,

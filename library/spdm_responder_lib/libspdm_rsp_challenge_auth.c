@@ -162,6 +162,7 @@ libspdm_return_t libspdm_get_response_challenge_auth(void *context,
     ptr = (void *)(spdm_response + 1);
     result = libspdm_generate_cert_chain_hash(spdm_context, slot_id, ptr);
     if (!result) {
+        printk("CTX[%p] %s:%d\n", spdm_context, __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -170,6 +171,7 @@ libspdm_return_t libspdm_get_response_challenge_auth(void *context,
 
     result = libspdm_get_random_number(SPDM_NONCE_SIZE, ptr);
     if (!result) {
+        printk("CTX[%p] %s:%d\n", spdm_context, __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -193,6 +195,7 @@ libspdm_return_t libspdm_get_response_challenge_auth(void *context,
     }
 
     if (!result) {
+        printk("CTX[%p] %s:%d\n", spdm_context, __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -225,6 +228,7 @@ libspdm_return_t libspdm_get_response_challenge_auth(void *context,
                                       (size_t)ptr - (size_t)spdm_response);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         libspdm_reset_message_c(spdm_context);
+        printk("CTX[%p] %s:%d\n", spdm_context, __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(spdm_context,
                                                SPDM_ERROR_CODE_UNSPECIFIED, 0,
                                                response_size, response);
@@ -233,6 +237,7 @@ libspdm_return_t libspdm_get_response_challenge_auth(void *context,
                                                        ptr);
     if (!result) {
         libspdm_reset_message_c(spdm_context);
+        printk("CTX[%p] %s:%d\n", spdm_context, __PRETTY_FUNCTION__, __LINE__);
         return libspdm_generate_error_response(
             spdm_context, SPDM_ERROR_CODE_UNSPECIFIED,
             0, response_size, response);

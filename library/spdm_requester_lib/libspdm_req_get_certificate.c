@@ -221,6 +221,7 @@ libspdm_return_t libspdm_try_get_certificate(void *context, uint8_t slot_id,
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             libspdm_release_receiver_buffer (spdm_context);
             status = LIBSPDM_STATUS_BUFFER_FULL;
+            printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
             goto done;
         }
         status = libspdm_append_message_b(spdm_context, spdm_response,
@@ -228,6 +229,7 @@ libspdm_return_t libspdm_try_get_certificate(void *context, uint8_t slot_id,
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             libspdm_release_receiver_buffer (spdm_context);
             status = LIBSPDM_STATUS_BUFFER_FULL;
+            printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
             goto done;
         }
 
@@ -241,6 +243,7 @@ libspdm_return_t libspdm_try_get_certificate(void *context, uint8_t slot_id,
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             libspdm_release_receiver_buffer (spdm_context);
             status = LIBSPDM_STATUS_BUFFER_FULL;
+            printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
             goto done;
         }
         spdm_context->connection_info.connection_state = LIBSPDM_CONNECTION_STATE_AFTER_CERTIFICATE;
@@ -304,6 +307,7 @@ libspdm_return_t libspdm_try_get_certificate(void *context, uint8_t slot_id,
     if (cert_chain_size != NULL) {
         if (*cert_chain_size <
             libspdm_get_managed_buffer_size(&certificate_chain_buffer)) {
+            printk("%s:%d cert_chain_size=%d\n", __PRETTY_FUNCTION__, __LINE__, *cert_chain_size);
             *cert_chain_size = libspdm_get_managed_buffer_size(
                 &certificate_chain_buffer);
             return LIBSPDM_STATUS_BUFFER_FULL;

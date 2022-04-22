@@ -100,6 +100,7 @@ libspdm_return_t libspdm_try_get_version(libspdm_context_t *spdm_context,
         goto receive_done;
     }
     if (spdm_response->header.spdm_version != SPDM_MESSAGE_VERSION_10) {
+        printk("MSG VER 10 %02x\n", spdm_response->header.spdm_version);
         status = LIBSPDM_STATUS_INVALID_MSG_FIELD;
         goto receive_done;
     }
@@ -109,6 +110,7 @@ libspdm_return_t libspdm_try_get_version(libspdm_context_t *spdm_context,
             goto receive_done;
         }
     } else if (spdm_response->header.request_response_code != SPDM_VERSION) {
+        printk("MSG RSP CODE %02x\n", spdm_response->header.request_response_code);
         status = LIBSPDM_STATUS_INVALID_MSG_FIELD;
         goto receive_done;
     }
@@ -117,10 +119,12 @@ libspdm_return_t libspdm_try_get_version(libspdm_context_t *spdm_context,
         goto receive_done;
     }
     if (spdm_response->version_number_entry_count > LIBSPDM_MAX_VERSION_COUNT) {
+        printk("MSG VER ENT CNT %02x\n", spdm_response->version_number_entry_count);
         status = LIBSPDM_STATUS_INVALID_MSG_FIELD;
         goto receive_done;
     }
     if (spdm_response->version_number_entry_count == 0) {
+        printk("MSG VER ENT CNT %02x\n", spdm_response->version_number_entry_count);
         status = LIBSPDM_STATUS_INVALID_MSG_FIELD;
         goto receive_done;
     }

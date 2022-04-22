@@ -220,6 +220,7 @@ uint16_t libspdm_allocate_req_session_id(libspdm_context_t *spdm_context)
         if ((session_info[index].session_id & 0xFFFF0000) ==
             (INVALID_SESSION_ID & 0xFFFF0000)) {
             req_session_id = (uint16_t)(0xFFFF - index);
+            printk("REQ Allocated SESSION ID=%p index=%d\n", req_session_id, index);
             return req_session_id;
         }
     }
@@ -246,6 +247,7 @@ uint16_t libspdm_allocate_rsp_session_id(const libspdm_context_t *spdm_context)
         if ((session_info[index].session_id & 0xFFFF) ==
             (INVALID_SESSION_ID & 0xFFFF)) {
             rsp_session_id = (uint16_t)(0xFFFF - index);
+            printk("RSP Allocated SESSION ID=%p index=%d\n", rsp_session_id, index);
             return rsp_session_id;
         }
     }

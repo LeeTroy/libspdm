@@ -446,6 +446,8 @@ libspdm_return_t libspdm_try_get_measurement(void *context, const uint32_t *sess
         *number_of_blocks = spdm_response->number_of_blocks;
         if (*measurement_record_length <
             measurement_record_data_length) {
+                printk("%s:%d measurement_record_length=%d measurement_record_data_length=%d\n",
+                *measurement_record_length, measurement_record_data_length);
             status = LIBSPDM_STATUS_BUFFER_TOO_SMALL;
             goto receive_done;
         }

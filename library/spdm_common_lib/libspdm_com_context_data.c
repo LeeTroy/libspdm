@@ -1561,6 +1561,7 @@ libspdm_return_t libspdm_append_message_k(void *context, void *session_info,
                 libspdm_get_managed_buffer(&spdm_context->transcript.message_a),
                 libspdm_get_managed_buffer_size(&spdm_context->transcript.message_a));
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
+                printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
                 return status;
             }
             if (!spdm_session_info->use_psk) {
@@ -1577,6 +1578,7 @@ libspdm_return_t libspdm_append_message_k(void *context, void *session_info,
                     &spdm_session_info->session_transcript.temp_message_k,
                     cert_chain_buffer_hash, hash_size);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
+                    printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
                     return status;
                 }
             }
@@ -1597,6 +1599,7 @@ libspdm_return_t libspdm_append_message_k(void *context, void *session_info,
             status = libspdm_append_managed_buffer(
                 &spdm_session_info->session_transcript.temp_message_k, message, message_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
+                printk("%s:%d\n", __PRETTY_FUNCTION__, __LINE__);
                 return status;
             }
         }

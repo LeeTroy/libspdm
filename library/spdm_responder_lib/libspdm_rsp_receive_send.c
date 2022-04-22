@@ -150,6 +150,11 @@ libspdm_return_t libspdm_process_request(void *context, uint32_t **session_id,
      * if it is secured message, this scratch buffer will be used.
      * if it is normal message, the response ptr will point to receiver buffer. */
     libspdm_get_scratch_buffer (spdm_context, (void **)&decoded_message_ptr, &decoded_message_size);
+
+for (size_t i=0; i<request_size; ++i)
+       printk("%02x ", *((uint8_t *)request + i));
+printk("\n");
+
     status = spdm_context->transport_decode_message(
         spdm_context, &message_session_id, is_app_message, true,
         request_size, request, &decoded_message_size,
